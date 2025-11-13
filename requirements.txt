@@ -1,0 +1,5 @@
+langchain-anthropic==0.3.18
+langchain-core==0.3.72
+langgraph==0.6.3
+ray==2.10.0
+
