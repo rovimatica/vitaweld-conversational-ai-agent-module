@@ -67,7 +67,7 @@ The concrete robotic **tasks** are delivered by the tools the integrator registe
 | Capability | Input | Output | Interface | Status |
 |---|---|---|---|---|
 | Conversational orchestration (ReAct) | Natural-language text | NL response + tool-call decisions | Python API / console | Implemented (used in demonstrator) |
-| User-defined tool registration & invocation | Python callables | Tool results fed back into the dialogue | Python API | Implemented (sequential execution) |
+| User-defined tool registration & invocation | Python callables (`@ray.remote` tools) | Tool results fed back into the dialogue | Python API | Implemented (parallel, non-blocking background execution via Ray) |
 | Conversation context memory | Dialogue turns | Maintained per-thread context | In-memory (`MemorySaver`) | Implemented (non-persistent) |
 | Configurable LLM backend | Config parameters | Configured chat model | `config.py` | Implemented (Anthropic / Claude) |
 
@@ -102,7 +102,7 @@ Type a message to chat with it; type `exit`, `quit` or `bye` to stop. If you get
 The basic demo shows the agent **reasoning and invoking a tool**, not just chatting. It registers a simple, domain-neutral example tool (`examples/example_tool.py`) so it can be run without any robot or welding setup.
 
 ```bash
-python examples/hello_world.py
+python examples/basic_demo.py
 ```
 
 In the demo, ask something that requires the example tool (e.g. *"What time is it?"*). The agent will decide to call the tool, execute it, and report the result in natural language. Expected behaviour and a screenshot are documented in [`docs/04_basic_demo_how_to_use.md`](docs/04_basic_demo_how_to_use.md).
@@ -113,7 +113,7 @@ Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/vid
 
 - **Framework-agnostic by design:** no ROS 2/Vulcanexus, FIWARE/NGSI-LD, DDS or ROS4HRI integration is bundled (see Section 2).
 - **LLM provider:** currently bound to the Anthropic (Claude) provider via `ChatAnthropic`; another provider requires adapting `init.py`.
-- **Tool execution:** Ray is included to support parallel execution, but tools currently run sequentially; true `@ray.remote` parallel execution is future work.
+- **Asynchronous results:** tools are dispatched as parallel, non-blocking Ray tasks; their results are delivered asynchronously as a follow-up message once finished, rather than inline in the same turn. The module starts a local Ray runtime on first use.
 - **Memory:** conversation memory is in-memory and not persisted across runs.
 - **Runtime cost:** running the agent requires a valid LLM API key and incurs the corresponding usage cost.
 - **Interface:** the open module provides a console interface only; the graphical web application is part of the (proprietary) demonstrator.
@@ -126,10 +126,10 @@ Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/vid
 ├── LICENSE
 ├── NOTICE
 ├── requirements.txt
-├── docker/                 # Dockerfile, docker-compose.yml
 ├── docs/                   # 01_arise_context … 05_role_in_demonstrator
 ├── src/vitaweld_agent/     # agent source code
-├── examples/               # hello_world.py, example_tool.py
+├── src/main.py             # hello world code
+├── examples/               # basic_demo.py, example_tool.py
 ├── config/                 # config.example.py
 └── media/                  # architecture diagram, screenshots, video_link.md
 ```
