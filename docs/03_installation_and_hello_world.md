@@ -69,12 +69,6 @@ User:
 Type a message (e.g. *"Hello, what can you do?"*). If you get a coherent reply,
 the installation is correct. Exit with `exit`, `quit` or `bye`.
 
-<div align="center">
-
-  <img src="media/screenshots/tutorial.png" alt="VITAWELD Conversational AI Agent" width="720" />
-
-</div>
-
 ## 5. Troubleshooting
 
 | Symptom | Likely cause | Fix |

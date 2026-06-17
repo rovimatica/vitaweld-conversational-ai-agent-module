@@ -61,12 +61,6 @@ The agent answers the new question while the welding cycle is still running.
 After ~20 seconds, the finished result is surfaced **asynchronously** as a
 follow-up message, and the agent reports the completed cycle in natural language.
 
-<div align="center">
-
-  <img src="media/screenshots/tutorial_basic_demo.png" alt="VITAWELD Conversational AI Agent" width="720" />
-
-</div>
-
 ## 4. Expected behaviour summary
 
 - Tool calls are decided by the model (ReAct), not hard-coded.
