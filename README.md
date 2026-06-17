@@ -97,6 +97,12 @@ I am VITAWELD's assistant.. How may I assist you?
 
 Type a message to chat with it; type `exit`, `quit` or `bye` to stop. If you get a coherent reply, the installation is correct.
 
+<div align="center">
+
+  <img src="media/screenshots/tutorial.png" alt="VITAWELD Conversational AI Agent" width="720" />
+
+</div>
+
 ## 7. Basic demo
 
 The basic demo shows the agent **reasoning and invoking a tool**, not just chatting. It registers a simple, domain-neutral example tool (`examples/example_tool.py`) so it can be run without any robot or welding setup.
@@ -105,7 +111,15 @@ The basic demo shows the agent **reasoning and invoking a tool**, not just chatt
 python examples/basic_demo.py
 ```
 
+<div align="center">
+
+  <img src="media/screenshots/tutorial_basic_demo.png" alt="VITAWELD Conversational AI Agent" width="720" />
+
+</div>
+
 In the demo, ask something that requires the example tool (e.g. *"What time is it?"*). The agent will decide to call the tool, execute it, and report the result in natural language. Expected behaviour and a screenshot are documented in [`docs/04_basic_demo_how_to_use.md`](docs/04_basic_demo_how_to_use.md).
+
+In the image, you can see how a task (welding mock) runs in the background while the system is asked to tell the time (another tool), and then we greet the assistant. You can see how, after the background tool finishes—and after having already responded to several separate intermediate messages—the assistant provides the welding report.
 
 Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/video_link.md).
 
