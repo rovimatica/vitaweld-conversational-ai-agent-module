@@ -1,0 +1,31 @@
+# NOTICE
+
+**VITAWELD Conversational AI Agent**
+Copyright 2025 Rovimatica
+
+This product was developed within the **VITAWELD** project (ARISE initiative) and
+is licensed under the **Apache License, Version 2.0** (see the [`LICENSE`](LICENSE)
+file).
+
+## Third-party components
+
+This software depends on the following third-party open-source components, each
+distributed under its own license:
+
+| Component | Purpose | License |
+|---|---|---|
+| `langchain-core` | LLM abstractions (messages, tools) | MIT |
+| `langchain-anthropic` | Anthropic (Claude) chat-model integration | MIT |
+| `langgraph` | Stateful agent graph (ReAct orchestration) | MIT |
+| `ray` | Parallel, non-blocking task execution | Apache-2.0 |
+
+The full text of each license is available in the respective project's
+repository and distribution package. Transitive dependencies are subject to
+their own licenses. License information should be verified against the exact
+versions pinned in [`requirements.txt`](requirements.txt).
+
+## Trademarks
+
+"Anthropic" and "Claude" are trademarks of Anthropic, PBC. "ROS", "ROS 2",
+"Vulcanexus", "FIWARE" and "ROS4HRI" are referenced for descriptive purposes
+only and remain the property of their respective owners.

@@ -1,108 +1,170 @@
+# VITAWELD Conversational AI Agent
+
+A reusable, framework-agnostic LLM orchestration agent developed within the **VITAWELD** project, part of the **ARISE** initiative.
+
 <div align="center">
 
-  <img src="assets/vitaweld_project_logo.png" alt="VITAWELD Logo" width="1500" />
+  <img src="media/architecture_diagram.png" alt="VITAWELD Conversational AI Agent" width="720" />
 
 </div>
 
-# Reusable Conversational AI Agent Module
+---
 
-## Overview
+## 1. Module introduction
 
-The **VITAWELD Conversational AI Agent** is a reusable and framework-agnostic software module developed under the ARISE initiative.
-It provides a language-model–based orchestration agent capable of managing natural-language conversations and coordinating external tools through structured reasoning.
+The **VITAWELD Conversational AI Agent** is a reusable software module that provides a language-model–based orchestration layer. It interprets natural-language input, keeps conversational context, decides whether to answer directly or to invoke external tools, and coordinates those tools through structured reasoning (a **ReAct** — *Reason + Act* — loop built on **LangGraph**).
 
-Its derived from the VITAWELD MVP and designed to serve as a standalone orchestration component for other ARISE applications requiring intelligent, language-driven interaction.
+- **Problem addressed.** In industrial settings, operators often have to interact with several specialised software tools, each with its own logic and learning curve. This module offers a single natural-language entry point that can orchestrate those underlying capabilities, lowering the barrier for non-expert users.
+- **Inputs.** Natural-language user messages, plus a set of user-defined tools (Python callables) registered by the integrator.
+- **Outputs.** Natural-language responses and structured tool invocations, with tool results fed back into the conversation.
+- **HRI / robotic capability delivered.** A conversational *mission-controller* / orchestration layer that turns operator requests into coordinated tool actions, without forcing a rigid step-by-step sequence.
 
-This module has been **developed by Rovimatica** as part of the **VITAWELD project**, within the **ARISE initiative**, contributing to the development of reusable and intelligent software components for industrial AI systems.
+The module is **standalone and framework-agnostic**: it focuses purely on conversation handling, tool invocation and response management, and is neutral with respect to the systems it controls.
 
-## Architecture
+## 2. Connection with ARISE
 
-![Module_AI](assets/Open_Module_AI.png)
+This module is the open, reusable extract of the **mission controller** used in the VITAWELD TRL6 demonstrator, where it orchestrated the complete robotic-welding workflow (part selection, weld definition, workpiece positioning, parameter configuration, trajectory generation, execution and monitoring) through natural-language interaction.
 
-The agent follows the **ReAct (Reason + Act)** architecture — a modern approach for building intelligent systems that combine reasoning and action. Its goal is to combine logical reasoning **("Reasoning")** with the ability to act **("Acting")** within a structured cycle, allowing the agent not only to generate text, but also to think, decide, and execute actions based on the input prompt. The agent will call on the tools needed to resolve the user's request or respond directly to the user if no tools are needed to resolve the task.
-This design enables the agent not only to generate coherent text responses, but also to **plan, decide, and invoke tools** dynamically to fulfill user requests.
+It contributes to the ARISE ecosystem as a **reusable orchestration component** that any partner can integrate into AI-assisted, human-centric applications requiring natural-language–driven interaction.
 
-Allows the use of tools developed by any user, which can be executed either in series or in parallel, depending on their needs.
-To do it in parallel, the Ray framework has been implemented, which allows functions to be launched in independent processes under a wrapper established using @ray.remote.
+**ARISE middleware interfaces (scope of this open module).** The agent is deliberately decoupled from any specific middleware. In the VITAWELD demonstrator, the connection to the ARISE middleware was implemented **outside** the agent, inside the tools registered into it:
 
-**Key features**
+| ARISE interface | Status in this module | Rationale |
+|---|---|---|
+| ROS 2 / Vulcanexus | N/A (not bundled) | The agent is not a ROS 2 package. In the demonstrator, ROS 2/Vulcanexus communication lived in the external tools the agent invoked. The module exposes a clean Python tool interface so that a ROS 2 bridge tool can be plugged in. |
+| FIWARE / NGSI-LD | N/A (not bundled) | Context-broker integration was handled by a dedicated demonstrator component, not by the agent. |
+| DDS enabler | N/A (not bundled) | No DDS communication is performed by the agent itself. |
+| ROS4HRI | N/A (not bundled) | The agent does not produce or consume ROS4HRI messages directly. In the demonstrator, ROS4HRI-compatible human-state and gesture information was produced by perception tools and surfaced to the agent only as tool inputs/events. |
 
-- **LangGraph-based orchestration** for structured conversational flow and tool invocation.
-- **Tool extensibility**: developers can register any number of tools, which may run sequentially or in parallel.
-- **Ray integration for parallel** (asynchronous) tool execution, preventing blocking during long-running tasks.
-- **Configurable LLM parameters** (model, temperature, etc.) through a dedicated configuration file.
-- **Framework-agnostic** and **easily integrable** with other ARISE modules, including robotic, simulation, or process-control systems.
+See [`docs/02_interfaces.md`](docs/02_interfaces.md) for the full interface discussion and the demonstrator mapping.
 
-## Repository Structure
-#### *assistant.py* 
-Basic module of the AI VITAWELD assistant, with the structure of the conversational graph and the flow of conversation.
+## 3. Target platforms
 
-**Main Classes**:
-- **VitaweldAssistant**: Main agent class managing configuration, tools, and conversation flow.
-- **RayToolNode**: Handles tool execution (parallelized via Ray when enabled)..
+The module is **pure software with no hardware dependency**. Its only external runtime dependency is access to an LLM API (currently Anthropic / Claude). Any robot, sensor or simulator is reached **indirectly**, through a tool that the integrator registers.
 
-#### *config.py* 
-Configuration module of the AI VITAWELD assistant.
+| Target platform category | Tested on | Expected compatibility | Not supported / unknown |
+|---|---|---|---|
+| Manipulator / cobot | KUKA welding cell (in the demonstrator, via external tools) | Any manipulator reachable through a user-provided tool | Direct / native robot control (out of scope) |
+| Mobile robot / AMR / AGV | No | Reachable through a user-provided tool | Direct control |
+| Humanoid / social robot | No | Reachable through a user-provided tool | Direct control |
+| Industrial cell / PLC-integrated setup | KUKA robotic welding cell (demonstrator) | Yes, via integration tools | Native PLC protocols (out of scope) |
+| Sensors (RGB-D, camera, safety scanner, etc.) | No (perception handled by external tools in the demonstrator) | As tool inputs/events | Direct sensor drivers |
+| Simulation (Gazebo / Isaac Sim / Webots / RViz / mock) | No (not bundled) | Drivable through a user-provided tool | Bundled simulator |
 
-**Main class**:
-- **Config**: Manages global parameters:
-    - **MODEL**: Model name or version.
-    - **TEMPERATURE**: Creativity level of responses.
-    - **MAX_TOKENS**: Maximum output length.
-    - **TIMEOUT**: Response timeout.
-    - **MAX_RETRIES**: Automatic retry attempts.
-    - **API_KEY**: Model API authentication key.
-    - **SYSTEM_PROMPT**: Behavioral and instruction setup.
-    - **CONFIG**: Thread or conversation context ID.
-    - **MEMORY**: Enables contextual memory between dialogue turns.
+## 4. Robot missions and tasks
 
-#### *init.py* 
-Environment initialization module.
+| Mission type | Contributes? | How |
+|---|---|---|
+| Operator monitoring or assistance | Yes | Provides the conversational layer that guides and assists the operator through a workflow. |
+| Safety-aware task execution | Indirectly | Can route safety-related events (e.g. a stop command) to the appropriate tool/action; the safety logic itself is external. |
+| Quality inspection | Indirectly | Can trigger an inspection tool and report its result conversationally. |
+| Collaborative assembly / handover / navigation / intralogistics / teleoperation | N/A out of the box | Achievable only if the integrator registers the corresponding tools. |
 
-**Function**:
-- **setup_environment()** – Prepares dependencies and environment variables required by the assistant.
+The concrete robotic **tasks** are delivered by the tools the integrator registers; the module itself contributes the **orchestration** of those tasks from natural language.
 
-#### *main.py* 
-Main execution entry point of the VITAWELD assistant.
+## 5. Off-the-shelf capabilities
 
-**Function**:
-- **main()** – Launches the assistant and starts the conversation loop.
+| Capability | Input | Output | Interface | Status |
+|---|---|---|---|---|
+| Conversational orchestration (ReAct) | Natural-language text | NL response + tool-call decisions | Python API / console | Implemented (used in demonstrator) |
+| User-defined tool registration & invocation | Python callables (`@ray.remote` tools) | Tool results fed back into the dialogue | Python API | Implemented (parallel, non-blocking background execution via Ray) |
+| Conversation context memory | Dialogue turns | Maintained per-thread context | In-memory (`MemorySaver`) | Implemented (non-persistent) |
+| Configurable LLM backend | Config parameters | Configured chat model | `config.py` | Implemented (Anthropic / Claude) |
 
-## Installation
+## 6. Quick start (Hello World)
 
-1. Ensure Python 3.11 is installed (e.g., via Anaconda for a clean, isolated environment).
-2. In the project root, install dependencies with:
+The hello world runs the agent in the console and **requires no industrial hardware** — only Python and an LLM API key.
+
+**Prerequisites:** Python 3.11 and an Anthropic API key.
+
 ```bash
+# 1. Install dependencies
 pip install -r requirements.txt
+
+# 2. Configure the agent
+#    Copy the configuration template and fill in MODEL and API_KEY
+cp config/config.example.py src/vitaweld_agent/config.py
+
+# 3. Run the agent
+python src/main.py
 ```
 
-## Usage
+Expected result: the agent starts and prints
 
-1. Configure your assistant in the config.py file (model, API key, temperature, etc.).
-2. Run the assistant with:
+```
+I am VITAWELD's assistant.. How may I assist you?
+```
+
+Type a message to chat with it; type `exit`, `quit` or `bye` to stop. If you get a coherent reply, the installation is correct.
+
+<div align="center">
+
+  <img src="media/screenshots/tutorial.png" alt="Hello world console" width="720" />
+
+</div>
+
+## 7. Basic demo
+
+The basic demo shows the agent **reasoning and invoking a tool**, not just chatting. It registers some simple, domain-neutral example tools (`examples/example_tool.py`) so it can be run without any robot or welding setup.
+
 ```bash
-python main.py
+python examples/basic_demo.py
 ```
-3. Once running, start interacting with the assistant directly in the console.
-4. To end the execution, type **"exit"**, **"quit"** or **"bye"**.
 
-![Tutorial](assets/Tutorial.png)
+<div align="center">
 
-## Contribution to ARISE
+  <img src="media/screenshots/tutorial_basic_demo.png" alt="Basic demo: non-blocking execution" width="720" />
 
-The VITAWELD Conversational AI Agent has been developed and maintained by **Rovimatica**, representing its contribution to the **ARISE ecosystem of reusable modules**. It provides a **configurable and LLM-driven orchestration layer** that other partners can integrate into their own AI-assisted applications.
+</div>
 
-## 🧾 License
+In the demo, ask something that requires the example tool (e.g. *"What time is it?"*). The agent will decide to call the tool, execute it, and report the result in natural language. Expected behaviour and a screenshot are documented in [`docs/04_basic_demo_how_to_use.md`](docs/04_basic_demo_how_to_use.md).
 
-This software module is released under the **Apache License 2.0**.  
+In the image, you can see how a task (welding mock) runs in the background while the system is asked to tell the time (another tool), and then we greet the assistant. You can see how, after the background tool finishes—and after having already responded to several separate intermediate messages—the assistant provides the welding report.
+
+Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/video_link.md).
+
+## 8. Limitations
+
+- **Framework-agnostic by design:** no ROS 2/Vulcanexus, FIWARE/NGSI-LD, DDS or ROS4HRI integration is bundled (see Section 2).
+- **LLM provider:** currently bound to the Anthropic (Claude) provider via `ChatAnthropic`; another provider requires adapting `init.py`.
+- **Asynchronous results:** tools are dispatched as parallel, non-blocking Ray tasks; their results are delivered asynchronously as a follow-up message once finished, rather than inline in the same turn. The module starts a local Ray runtime on first use.
+- **Memory:** conversation memory is in-memory and not persisted across runs.
+- **Runtime cost:** running the agent requires a valid LLM API key and incurs the corresponding usage cost.
+- **Interface:** the open module provides a console interface only; the graphical web application is part of the (proprietary) demonstrator.
+- **Proprietary boundary:** the welding-specific tools and integrations (trajectory generation, candidate selection, workpiece positioning, weld-quality vision, gesture/ROS4HRI bridge, FIWARE bridge, web application) are **not** part of this open release.
+
+## 9. Repository structure
+
+```
+├── README.md
+├── LICENSE
+├── NOTICE
+├── requirements.txt
+├── docs/                   # 01_arise_context … 05_role_in_demonstrator
+├── src/vitaweld_agent/     # agent source code
+├── src/main.py             # hello world code
+├── examples/               # basic_demo.py, example_tool.py
+├── config/                 # config.example.py
+└── media/                  # architecture diagram, screenshots, video_link.md
+```
+
+## 10. Maintainer, contact and citation
+
+- **Maintainer:** Rovimatica — *Eduardo Moscosio, eduardo.moscosio@rovimatica.eu, edmosRovi*
+- **Issue tracker:** GitHub Issues of this repository
+- **Suggested acknowledgement:** *"VITAWELD Conversational AI Agent, developed by Rovimatica within the VITAWELD project (ARISE initiative)."*
+
+## 11. License
+
+Released under the **Apache License 2.0**. See [`LICENSE`](LICENSE).
 © 2025 Rovimatica — developed within the VITAWELD project (ARISE initiative).
 
 ---
 
 <div align="center">
 
-  <img src="assets/arise_logo.jpg" alt="ARISE Logo" width="220" />
-  <img src="assets/vitaweld_project_logo.png" alt="VITAWELD Logo" width="220" />
-  <img src="assets/rovimatica_logo.png" alt="Rovimatica Logo" width="220" />
+  <img src="media/arise_logo.jpg" alt="ARISE" width="200" />
+  <img src="media/vitaweld_project_logo.png" alt="VITAWELD" width="200" />
+  <img src="media/rovimatica_logo.png" alt="Rovimatica" width="200" />
 
 </div>
