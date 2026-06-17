@@ -99,13 +99,13 @@ Type a message to chat with it; type `exit`, `quit` or `bye` to stop. If you get
 
 <div align="center">
 
-  <img src="media/screenshots/tutorial.png" alt="VITAWELD Conversational AI Agent" width="720" />
+  <img src="media/screenshots/tutorial.png" alt="Hello world console" width="720" />
 
 </div>
 
 ## 7. Basic demo
 
-The basic demo shows the agent **reasoning and invoking a tool**, not just chatting. It registers a simple, domain-neutral example tool (`examples/example_tool.py`) so it can be run without any robot or welding setup.
+The basic demo shows the agent **reasoning and invoking a tool**, not just chatting. It registers some simple, domain-neutral example tools (`examples/example_tool.py`) so it can be run without any robot or welding setup.
 
 ```bash
 python examples/basic_demo.py
@@ -113,7 +113,7 @@ python examples/basic_demo.py
 
 <div align="center">
 
-  <img src="media/screenshots/tutorial_basic_demo.png" alt="VITAWELD Conversational AI Agent" width="720" />
+  <img src="media/screenshots/tutorial_basic_demo.png" alt="Basic demo: non-blocking execution" width="720" />
 
 </div>
 
