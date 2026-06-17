@@ -56,8 +56,8 @@ The module is **pure software with no hardware dependency**. Its only external r
 | Mission type | Contributes? | How |
 |---|---|---|
 | Operator monitoring or assistance | Yes | Provides the conversational layer that guides and assists the operator through a workflow. |
-| Safety-aware task execution | Indirectly | Can route safety-related events (e.g. a stop command) to the appropriate tool/action; the safety logic itself is external. |
-| Quality inspection | Indirectly | Can trigger an inspection tool and report its result conversationally. |
+| Safety-aware task execution | N/A | Not orchestrated by the module. Safety supervision and the gesture-based stop run as an independent, real-time safety layer once welding begins — the agent neither triggers nor routes them. |
+| Quality inspection | N/A | Not orchestrated by the module. In the demonstrator, weld-quality / defect inspection ran automatically during and after welding, independently of the agent. |
 | Collaborative assembly / handover / navigation / intralogistics / teleoperation | N/A out of the box | Achievable only if the integrator registers the corresponding tools. |
 
 The concrete robotic **tasks** are delivered by the tools the integrator registers; the module itself contributes the **orchestration** of those tasks from natural language.
