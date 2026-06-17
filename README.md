@@ -1,12 +1,12 @@
+# VITAWELD Conversational AI Agent
+
+A reusable, framework-agnostic LLM orchestration agent developed within the **VITAWELD** project, part of the **ARISE** initiative.
+
 <div align="center">
 
   <img src="media/architecture_diagram.png" alt="VITAWELD Conversational AI Agent" width="720" />
 
 </div>
-
-# VITAWELD Conversational AI Agent
-
-A reusable, framework-agnostic LLM orchestration agent developed within the **VITAWELD** project, part of the **ARISE** initiative.
 
 ---
 
@@ -136,7 +136,7 @@ Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/vid
 
 ## 10. Maintainer, contact and citation
 
-- **Maintainer:** Rovimatica — *[name, email, GitHub user]*
+- **Maintainer:** Rovimatica — *[Eduardo Moscosio, eduardo.moscosio@rovimatica.eu, edmosRovi]*
 - **Issue tracker:** GitHub Issues of this repository
 - **Suggested acknowledgement:** *"VITAWELD Conversational AI Agent, developed by Rovimatica within the VITAWELD project (ARISE initiative)."*
 
