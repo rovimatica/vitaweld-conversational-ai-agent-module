@@ -1,6 +1,6 @@
 """Hello-world / basic demo for the VITAWELD Conversational AI Agent.
 
-Runs the agent in the console with a single neutral example tool registered,
+Runs the agent in the console with two example tools registered,
 so that the tool-calling mechanism can be demonstrated without any industrial
 hardware.
 
@@ -10,7 +10,7 @@ Prerequisites:
       (``config.py``).
 
 Usage:
-    $ python examples/hello_world.py
+    $ python examples/basic_demo.py
 
     Then try asking, for example: "What time is it?"
     The agent should decide to call ``get_current_time``, execute it, and
@@ -29,7 +29,7 @@ from pathlib import Path
 
 # Ensure the project root is on sys.path so that the top-level ``src`` and
 # ``examples`` packages can be imported when this file is run directly
-# (``python examples/hello_world.py``).
+# (``python examples/basic_demo.py``).
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.vitaweld_agent.assistant import VitaweldAssistant

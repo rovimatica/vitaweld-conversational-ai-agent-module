@@ -136,7 +136,7 @@ Demonstrator video (full TRL6-7 use case): see [`media/video_link.md`](media/vid
 
 ## 10. Maintainer, contact and citation
 
-- **Maintainer:** Rovimatica — *[Eduardo Moscosio, eduardo.moscosio@rovimatica.eu, edmosRovi]*
+- **Maintainer:** Rovimatica — *Eduardo Moscosio, eduardo.moscosio@rovimatica.eu, edmosRovi*
 - **Issue tracker:** GitHub Issues of this repository
 - **Suggested acknowledgement:** *"VITAWELD Conversational AI Agent, developed by Rovimatica within the VITAWELD project (ARISE initiative)."*
 
